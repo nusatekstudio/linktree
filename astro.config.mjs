@@ -7,12 +7,12 @@ import tailwindcss from '@tailwindcss/vite';
 //   • GitHub Pages user site:    'https://USERNAME.github.io'
 //   • GitHub Pages project site: 'https://USERNAME.github.io'   (and set BASE_PATH below)
 //   • custom domain:             'https://nusatek.solution'
-const SITE_URL = '';
+const SITE_URL = 'https://nusatekstudio.github.io';
 
 // Sub-path the site is served from. Keep '/' for a user site or custom domain.
 // For a GitHub Pages *project* site at github.io/REPO, set this to '/REPO/'
 // (with leading + trailing slashes), e.g. '/nusatek-linktree/'.
-const BASE_PATH = '/';
+const BASE_PATH = '/linktree/';
 
 // Static-first: the entire page prerenders to HTML. No adapter, no server.
 // Deploy the `dist/` folder to any static host (GitHub Pages, Cloudflare Pages, …).
