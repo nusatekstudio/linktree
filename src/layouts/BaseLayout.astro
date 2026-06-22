@@ -1,0 +1,73 @@
+---
+/**
+ * Document shell: <head> metadata, OG/Twitter cards, self-hosted font (via the
+ * global stylesheet), and the pre-paint theme boot script. Static-rendered.
+ */
+import '../styles/global.css';
+import { SITE } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = SITE.title, description = SITE.description } = Astro.props;
+
+// Absolute URLs for canonical + social cards, derived from `site` in astro.config.
+// `site` may be unset (no domain yet) — fall back gracefully instead of throwing.
+const base = Astro.site;
+// Prefix public/ assets with the configured `base` so they resolve under a sub-path
+// (e.g. a GitHub Pages project site served at /<repo>/). BASE_URL is '/' by default.
+const asset = (p: string) =>
+  import.meta.env.BASE_URL.replace(/\/$/, '') + '/' + p.replace(/^\//, '');
+const canonical = base ? new URL(import.meta.env.BASE_URL, base).href : undefined;
+const ogImage = base ? new URL(asset(SITE.ogImage), base).href : asset(SITE.ogImage);
+---
+
+<!doctype html>
+<html lang={SITE.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* Set the theme BEFORE first paint to avoid a flash of the wrong theme (PRD §F3). */}
+    <script is:inline>
+      try {
+        if (localStorage.getItem('nusatek-theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    </script>
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content={SITE.themeColor.light} />
+
+    <link rel="icon" type="image/png" sizes="32x32" href={asset('brand/favicon-32.png')} />
+    <link rel="icon" type="image/png" sizes="16x16" href={asset('brand/favicon-16.png')} />
+    <link rel="apple-touch-icon" href={asset('brand/apple-touch-icon.png')} />
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={SITE.ogImageAlt} />
+    <meta property="og:locale" content="id_ID" />
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={SITE.ogImageAlt} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

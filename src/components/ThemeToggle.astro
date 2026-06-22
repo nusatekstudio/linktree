@@ -1,0 +1,90 @@
+---
+/**
+ * Light/dark toggle. The icon swap is CSS-only (it reacts to `data-theme` on
+ * <html>), so the correct glyph shows immediately from the pre-paint boot script —
+ * no flash and no JS needed just to render. The tiny script only wires the click,
+ * persists the choice, and keeps the accessible name/theme-color in sync.
+ */
+import Icon from './Icon.astro';
+---
+
+<button id="theme-toggle" type="button" class="theme-toggle" aria-label="Aktifkan mode gelap">
+  <span class="ic ic-sun"><Icon name="sun" size={20} /></span>
+  <span class="ic ic-moon"><Icon name="moon" size={20} /></span>
+</button>
+
+<style>
+  .theme-toggle {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: var(--toggle-bg);
+    border: 1px solid var(--toggle-border);
+    color: var(--ink-muted);
+    box-shadow: var(--shadow-rest);
+    cursor: pointer;
+    transition:
+      transform 200ms ease,
+      box-shadow 200ms ease,
+      background 240ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+  }
+
+  .ic {
+    display: inline-flex;
+  }
+
+  /* Show sun in light, moon in dark. */
+  .ic-moon {
+    display: none;
+  }
+  :global([data-theme='dark']) .ic-sun {
+    display: none;
+  }
+  :global([data-theme='dark']) .ic-moon {
+    display: inline-flex;
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('theme-toggle');
+  if (btn) {
+    const root = document.documentElement;
+    const meta = document.querySelector('meta[name="theme-color"]');
+
+    const sync = () => {
+      const dark = root.getAttribute('data-theme') === 'dark';
+      // Accessible name reflects the *next* action (PRD §F5).
+      btn.setAttribute('aria-label', dark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+      btn.setAttribute('aria-pressed', String(dark));
+      if (meta) meta.setAttribute('content', dark ? '#0B1424' : '#FAF7F2');
+    };
+
+    sync();
+
+    btn.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'dark' ? null : 'dark';
+      if (next) root.setAttribute('data-theme', next);
+      else root.removeAttribute('data-theme');
+      try {
+        localStorage.setItem('nusatek-theme', next || 'light');
+      } catch (e) {
+        /* private mode / storage disabled — toggle still works for the session */
+      }
+      sync();
+    });
+  }
+</script>

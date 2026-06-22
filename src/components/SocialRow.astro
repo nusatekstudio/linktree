@@ -1,0 +1,62 @@
+---
+/**
+ * Row of circular social buttons. Each is a real <a> with its own accessible name
+ * and rel="me" for profile verification. Opens in a new tab so the bio page stays put.
+ */
+import SocialIcon from './SocialIcon.astro';
+import { profile } from '../data/profile';
+---
+
+<nav class="socials" aria-label="Media sosial NusaTek">
+  {
+    profile.socials.map((s) => (
+      <a
+        class="social"
+        href={s.href}
+        aria-label={s.label}
+        rel="me noopener noreferrer"
+        target="_blank"
+        data-link-id={`social-${s.network}`}
+      >
+        <SocialIcon network={s.network} />
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .socials {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .social {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--ink-strong);
+    box-shadow: var(--shadow-rest);
+    transition:
+      transform 200ms ease,
+      box-shadow 200ms ease,
+      background 240ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .social:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+  }
+
+  .social:active {
+    transform: translateY(0);
+  }
+</style>

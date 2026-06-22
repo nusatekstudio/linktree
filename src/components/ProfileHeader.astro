@@ -1,0 +1,221 @@
+---
+/**
+ * Logo + handle + tagline + "services" pills. The logo is optimized by astro:assets
+ * into AVIF/WebP with a PNG fallback and fixed dimensions (no CLS). It's the LCP
+ * element, so it loads eagerly with high fetch priority.
+ *
+ * The service pills reuse the brand accent palette (the same pastel gradients as the
+ * link-card icon tiles) so they feel native to the page. Accents cycle per pill.
+ */
+import { Picture } from 'astro:assets';
+import logo from '../assets/logo-nusatek.png';
+import { profile } from '../data/profile';
+import { ACCENTS, type Accent } from '../lib/accents';
+
+const ACCENT_CYCLE: Accent[] = ['blue', 'green', 'purple', 'orange'];
+---
+
+<header class="profile">
+  <div class="logo-wrap">
+    <Picture
+      src={logo}
+      formats={['avif', 'webp']}
+      width={336}
+      densities={[1, 2]}
+      alt="NusaTek"
+      class="logo"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+  <h1 class="handle">{profile.handle}</h1>
+  <p class="tagline">{profile.tagline}</p>
+
+  {
+    profile.products.length > 0 && (
+      <section class="services">
+        <h2 class="services-eyebrow">
+            <strong>
+            Menawarkan Jasa
+            </strong>
+        </h2>
+        <ul class="services-list">
+          {profile.products.map((s, i) => {
+            const accent = ACCENTS[ACCENT_CYCLE[i % ACCENT_CYCLE.length]];
+            return (
+              <li
+                class="service-pill"
+                style={`--pill-tile:${accent.tile};--pill-ink:${accent.ink};--pill-delay:${i * 70}ms`}
+              >
+                <span class="pill-label">{s.label}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )
+  }
+</header>
+
+<style>
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo-wrap {
+    width: 144px;
+    height: 144px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeUp 0.6s ease-out both;
+  }
+
+  .logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: var(--logo-shadow);
+  }
+
+  .handle {
+    margin: 8px 0 0;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 28px;
+    letter-spacing: -0.01em;
+    color: var(--ink-strong);
+  }
+
+  .tagline {
+    margin: 10px 0 0;
+    max-width: 360px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 23px;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  /* ---- Services ---------------------------------------------------------- */
+  .services {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Editorial eyebrow: small, tracked, uppercase, with thin flanking rules. */
+  .services-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .services-eyebrow::before,
+  .services-eyebrow::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: color-mix(in srgb, var(--ink-soft) 38%, transparent);
+  }
+
+  .services-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 400px;
+  }
+
+  .service-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    background: var(--pill-tile);
+    position: relative;
+    overflow: hidden;
+    /* Deep navy is theme-invariant on purpose: the pastel tile stays light in both
+       themes, so a fixed dark label keeps AA contrast in light AND dark. */
+    color: #0f2a4f;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--pill-ink) 16%, transparent),
+      var(--shadow-rest);
+    animation: fadeUp 0.5s ease-out both;
+    animation-delay: var(--pill-delay);
+    transition:
+      transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 200ms ease;
+  }
+
+  /* Keep the label above the shimmer sweep so it stays crisp and readable. */
+  .pill-label {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Shimmer: a soft diagonal sheen sweeps across each pill on a staggered loop.
+     Clipped to the pill by `overflow: hidden`; sits below the label (z-index 0).
+     Disabled automatically under prefers-reduced-motion (global rule). */
+  .service-pill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 62%
+    );
+    transform: translateX(-120%);
+    animation: shimmer 5s ease-in-out infinite;
+    /* Stagger each pill's shine for a sequential wave (0ms, ~560ms, ~1120ms…). */
+    animation-delay: calc(var(--pill-delay) * 8);
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-120%);
+    }
+    45%,
+    100% {
+      transform: translateX(120%);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .service-pill:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--pill-ink) 28%, transparent),
+        var(--shadow-hover);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .logo-wrap {
+      width: 168px;
+      height: 168px;
+    }
+  }
+</style>

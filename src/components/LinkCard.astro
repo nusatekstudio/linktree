@@ -1,0 +1,108 @@
+---
+/**
+ * A single link card: accent icon tile + title/subtitle + chevron. Accent styling
+ * (tile gradient, glyph color, hover border) is passed in as CSS custom properties
+ * so one rule set covers all four accents. Hover-lift is gated to fine pointers;
+ * touch devices get a tap-down state instead (PRD §5.2).
+ */
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import { ACCENTS, type Accent } from '../lib/accents';
+
+interface Props {
+  link: CollectionEntry<'links'>['data'];
+  id: string;
+  index?: number;
+}
+
+const { link, id, index = 0 } = Astro.props;
+const accent = ACCENTS[link.accent as Accent];
+const vars = [
+  `--hover-border:${accent.hover}`,
+  `--delay:${index * 50}ms`,
+].join(';');
+---
+
+<a class="card" href={link.href} target="_blank" data-link-id={id} style={vars}>
+  <span class="tile" aria-hidden="true">
+    <Icon name={link.icon} size={20} />
+  </span>
+  <span class="body">
+    <span class="title">{link.title}</span>
+    {link.subtitle && <span class="subtitle">{link.subtitle}</span>}
+  </span>
+  <Icon name="chevron-right" size={16} strokeWidth={2.25} class="chevron" />
+</a>
+
+<style>
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-rest);
+    text-decoration: none;
+    animation: fadeUp 0.5s ease-out both;
+    animation-delay: var(--delay);
+    transition:
+      transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 200ms ease,
+      border-color 200ms ease,
+      background 240ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--hover-border);
+    }
+  }
+
+  .card:active {
+    transform: translateY(0) scale(0.99);
+  }
+
+  .tile {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-tile);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tile);
+    color: var(--tile-ink);
+  }
+
+  .body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .title {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: -0.005em;
+    color: var(--ink-strong);
+  }
+
+  .subtitle {
+    display: block;
+    margin-top: 1px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--ink-soft);
+  }
+
+  .chevron {
+    flex: none;
+    color: var(--ink-disabled);
+  }
+</style>

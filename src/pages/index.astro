@@ -1,0 +1,86 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import ProfileHeader from '../components/ProfileHeader.astro';
+import LinkCard from '../components/LinkCard.astro';
+import SocialRow from '../components/SocialRow.astro';
+import Footer from '../components/Footer.astro';
+
+// Source of truth = the `links` content collection. Show only published cards,
+// ordered by `order`. Schema is validated at build time (src/content/config.ts).
+const links = (await getCollection('links', ({ data }) => data.published)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout>
+  <ThemeToggle />
+
+  <main class="column">
+    <ProfileHeader />
+
+    <ul class="links" role="list">
+      {
+        links.map((entry, i) => (
+          <li>
+            <LinkCard link={entry.data} id={entry.id} index={i + 1} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <SocialRow />
+    <Footer />
+  </main>
+
+  {/* Optional, privacy-friendly click attribution. Inert unless an endpoint is set
+      in src/lib/site.ts — keeps the page fully static (PRD §F2, reconciled). */}
+  <script>
+    import { SITE } from '../lib/site';
+
+    const endpoint = SITE.analyticsEndpoint;
+    if (endpoint && 'sendBeacon' in navigator) {
+      document.addEventListener('click', (event) => {
+        const link = (event.target as HTMLElement)?.closest?.('a[data-link-id]');
+        if (!link) return;
+        try {
+          navigator.sendBeacon(
+            endpoint,
+            JSON.stringify({ id: link.getAttribute('data-link-id'), ts: new Date().toISOString() }),
+          );
+        } catch {
+          /* never block navigation on a tracking failure */
+        }
+      });
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  .column {
+    position: relative;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 72px 24px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .links {
+    width: 100%;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  @media (min-width: 768px) {
+    .column {
+      padding-top: 96px;
+    }
+  }
+</style>

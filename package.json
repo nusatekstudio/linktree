@@ -1,0 +1,26 @@
+{
+  "name": "nusatek-links",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NusaTek one-link landing page — a fast, static, themeable link-in-bio built with Astro.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "assets": "node scripts/generate-og.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.1.0",
+    "astro": "^4.16.18"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@tailwindcss/vite": "^4.1.11",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.7.3"
+  }
+}

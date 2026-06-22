@@ -1,0 +1,9 @@
+{
+  "title": "Hubungi WhatsApp Kami",
+  "subtitle": "+62 895-6292-60910",
+  "href": "https://api.whatsapp.com/send/?phone=62895629260910&text&type=phone_number&app_absent=0",
+  "icon": "whatsapp",
+  "accent": "green",
+  "published": true,
+  "order": 2
+}

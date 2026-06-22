@@ -1,0 +1,136 @@
+/* =============================================================================
+   NusaTek Links — global stylesheet
+   Tailwind v4 + a token layer. Semantic colors are CSS custom properties so the
+   light/dark themes swap by toggling `data-theme="dark"` on <html> (see DESIGN.md
+   §1.2). Tailwind utilities read those tokens via `@theme inline`, so classes like
+   `bg-card` / `text-ink-strong` stay theme-reactive.
+   ========================================================================== */
+
+@import 'tailwindcss';
+
+/* Dark variant driven by the data-theme attribute (not prefers-color-scheme):
+   the PRD defaults to light and persists the user's explicit choice. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* Self-hosted Plus Jakarta Sans, latin subset only, variable weight axis.
+   No runtime font CDN (PRD §F6). Vite fingerprints the woff2 at build. */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2')
+    format('woff2-variations');
+}
+
+/* Static design tokens → Tailwind theme (emitted as real :root vars). */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, sans-serif;
+
+  --radius-tile: 12px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  /* Focus ring — same in both themes (DESIGN §7). */
+  --color-focus: #3b7bd4;
+}
+
+/* Theme-variant tokens → Tailwind colors, inlined so utilities resolve to the
+   live `var(--bg)` etc. and react to the data-theme swap. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-ink-strong: var(--ink-strong);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-disabled: var(--ink-disabled);
+}
+
+/* ---- Light theme (default) ------------------------------------------------ */
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --card-border: rgba(30, 80, 162, 0.08);
+  --ink-strong: #0f2a4f;
+  --ink-muted: #4b5a75;
+  --ink-soft: #6b7a95;
+  --ink-disabled: #9aa6bc;
+
+  --shadow-rest: 0 2px 8px rgba(15, 42, 79, 0.04);
+  --shadow-hover: 0 10px 24px rgba(15, 42, 79, 0.1);
+
+  --toggle-bg: #ffffff;
+  --toggle-border: rgba(30, 80, 162, 0.12);
+  --logo-shadow: drop-shadow(0 8px 24px rgba(30, 80, 162, 0.18));
+
+  color-scheme: light;
+}
+
+/* ---- Dark theme ----------------------------------------------------------- */
+:root[data-theme='dark'] {
+  --bg: #0b1424;
+  --card: #16213a;
+  --card-border: rgba(255, 255, 255, 0.06);
+  --ink-strong: #f1f5ff;
+  --ink-muted: #b8c3db;
+  --ink-soft: #8a99b5;
+  --ink-disabled: #4f5e78;
+
+  --shadow-rest: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.35);
+
+  --toggle-bg: #16213a;
+  --toggle-border: rgba(255, 255, 255, 0.08);
+  --logo-shadow: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--bg);
+    color: var(--ink-strong);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Cross-fade on theme swap (≤240ms, PRD §5.2). */
+    transition: background 240ms ease, color 240ms ease;
+  }
+
+  /* Visible, consistent focus ring on every interactive element, both themes. */
+  :where(a, button, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  /* Staggered entry — 8px rise + fade (DESIGN §1.5). */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Respect reduced motion: no entry animation, instant (no-flash) theme swap. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

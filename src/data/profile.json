@@ -1,0 +1,21 @@
+{
+  "handle": "@nusatek.solution",
+  "tagline": "Solusi Teknologi Nusantara",
+  "products": [
+    { 
+      "label": "CV & Website Portofolio"
+    },
+    {
+      "label": "Company Profile Website"
+    },
+    {
+      "label": "Desain Kreatif Digital"
+    }
+  ],
+  "copyright": "© 2026 NusaTek · Solusi Teknologi Nusantara",
+  "socials": [
+    { "network": "tiktok", "label": "TikTok", "href": "https://www.tiktok.com/@nusatek.solution" },
+    { "network": "instagram", "label": "Instagram", "href": "https://www.instagram.com/nusatek.solution" },
+    { "network": "threads", "label": "Threads", "href": "https://www.threads.net/@nusatek.solution" }
+  ]
+}

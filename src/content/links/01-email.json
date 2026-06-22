@@ -1,0 +1,9 @@
+{
+  "title": "Kontak Email",
+  "subtitle": "nusatek.official@gmail.com",
+  "href": "mailto:nusatek.official@gmail.com",
+  "icon": "email",
+  "accent": "blue",
+  "published": true,
+  "order": 1
+}
