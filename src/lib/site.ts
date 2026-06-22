@@ -8,7 +8,7 @@ export const SITE = {
   /** <title> and OG title (PRD §F4). */
   title: 'NusaTek · Solusi Teknologi Nusantara',
   description:
-    'Satu tautan untuk semua kanal resmi PT NusaTek Nusantara Tbk — website, hubungan investor, siaran pers, produk, karir, dan kontak.',
+    'Satu tautan untuk semua kanal NusaTek · Solusi Teknologi Nusantara',
   /** <html lang>. */
   locale: 'id',
 
