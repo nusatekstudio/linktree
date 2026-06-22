@@ -1,6 +1,6 @@
 # NusaTek Links
 
-A fast, static, themeable **link-in-bio** landing page for PT NusaTek Nusantara Tbk — one URL for every social bio, QR code, and email signature. Built with Astro, TypeScript, and Tailwind CSS. No backend, no database, no accounts — it deploys as a folder of static files.
+A fast, static, themeable **link-in-bio** landing page for NusaTek Nusantara — one URL for every social bio, QR code, and email signature. Built with Astro, TypeScript, and Tailwind CSS. No backend, no database, no accounts — it deploys as a folder of static files.
 
 ![Light and dark themes of the NusaTek links page](public/brand/og-image.png)
 
