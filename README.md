@@ -77,3 +77,5 @@ bunx wrangler pages deploy dist --project-name=nusatek-links
 ```
 
 Set the production URL in `astro.config.mjs` (`site:`) so canonical and OG URLs are correct.
+
+© 2026 NusaTek · Solusi Teknologi Nusantara
